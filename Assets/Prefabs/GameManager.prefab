@@ -48,10 +48,7 @@ MonoBehaviour:
   startLives: 3
   respawnDelay: 1
   respawnProtection: 2
-  scoreText: {fileID: 0}
-  heartsText: {fileID: 0}
-  livesText: {fileID: 0}
-  winPanel: {fileID: 0}
-  losePanel: {fileID: 0}
   player: {fileID: 0}
   respawnPoint: {fileID: 0}
+  winClip: {fileID: 8300000, guid: 73603bf00d730d3409301d5840e539d4, type: 3}
+  loseClip: {fileID: 8300000, guid: 76326e4cd6a9635418a77e21634d07f9, type: 3}

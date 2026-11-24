@@ -126,3 +126,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Coin
   value: 1
+  pickupClip: {fileID: 8300000, guid: e6f88903682c4774ca1de87f62bc3a50, type: 3}
+  burstPrefab: {fileID: 0}

@@ -1,47 +1,47 @@
-# CS464 Assignment 03 · BSCS24074
+# CS464 Assignment 04 · Muhammad Aqib Ramzan · BSCS24074
 
-- **Video Link:** https://drive.google.com/file/d/1tcmnpAgkGFPXd4OMCxlj7s1tRlXwSfp5/view?usp=sharing
-- **Started from:** A new project (Unity 6.3 LTS). I had no Assignment 02 repo to copy, so I started as Assignment 01's page 3 describes, with five scenes, a Rigidbody player and Active Input Handling set to Both.
-- **Controls:** WASD or arrow keys to move, Space to jump.
-- **To win a level:** Collect every coin in the level (Level01: 6, Level02: 5, Level03: 6, Level04: 5, Level05: 7). Reaching the goal with enough coins also wins. Lose all 3 lives (a fall costs one) and the game ends. Restart is on both the win and lose panels.
+**Video (90–180 s):** https://drive.google.com/file/d/1hS-q1CgayITd41ZCqtB1feZrm_Jt6x1J/view?usp=sharing
 
-## Levels
+<p>
+<img src="Docs/a4/hud-16x9.png" width="320" alt="The HUD at 16:9">
+<img src="Docs/a4/hud-4x3.png" width="240" alt="The HUD at 4:3">
+<img src="Docs/a4/hud-gray.png" width="320" alt="The HUD in grayscale">
+</p>
 
-| Level | Screenshot | New idea | Combined with |
-|---|---|---|---|
-| Level01 | <img src="Docs/a3/level01.png" width="320"> | Coins, a goal and the bounce pad | Nothing hurts yet |
-| Level02 | <img src="Docs/a3/level02.png" width="320"> | Spikes, one heart at a time | A coin on a risky detour between two spikes, and a gap to jump |
-| Level03 | <img src="Docs/a3/level03.png" width="320"> | A guard that patrols, chases, gives up and returns | Spikes beside its route |
-| Level04 | <img src="Docs/a3/level04.png" width="320"> | The crusher, which warns before it strikes | A guard beside it, in a walled lane |
-| Level05 | <img src="Docs/a3/level05.png" width="320"> | Two speed pickups, reachable within 5 s | Everything so far, a ping-pong guard and a checkpoint |
+## Screenshots
 
-## The numbers
-
-| Number | Value | Why this value |
+| Main menu | Level select | Pause menu |
 |---|---|---|
-| Patrol speed | 2 m/s | The player runs at 5 m/s, so a patrolling guard moves at 40% of my speed and is easy to read and avoid. |
-| Chase range | 6 m (gives up beyond 10 m) | [Write what a guard can and can't see from its route in your levels.] The longer give-up range stops the guard flickering between states at one edge. |
-| Chase speed | 3.5 m/s | Slower than my run speed (5 m/s), so a chase can always be escaped on open ground. |
-| Knockback | 8, ForceMode.Impulse, steering paused 0.25 s | [Measure in play how far it throws you and write it here.] |
-| I-frames | 1 s | [Write the time it takes you to get clear after a hit.] |
-| Power-up duration | 5 s at 1.6x speed | [Write what 5 s is long enough for, and what it is not.] In Level05 the two pickups are 8 m apart, so both can be collected within 5 s. |
-| Crusher warning | 0.7 s | Over the 0.5 s minimum, so there is time to react before the strike. |
-| Bounce pad | 9, ForceMode.VelocityChange | [Write how high it throws you, measured in play.] |
+| <img src="Docs/a4/main-menu.png" width="280" alt="Main menu"> | <img src="Docs/a4/level-select.png" width="280" alt="Level select"> | <img src="Docs/a4/pause.png" width="280" alt="Pause menu"> |
 
-## Short answers
+| Win screen | Game over |
+|---|---|
+| <img src="Docs/a4/win.png" width="280" alt="Win screen"> | <img src="Docs/a4/gameover.png" width="280" alt="Game over screen"> |
 
-**1. Why does a trigger need a Rigidbody on at least one of the two objects?**
+- **Started from:** my Assignment 03 repo, copied with its history into this repo (Unity 6.3).
+- **Controls:** WASD or arrows to move, Space to jump, Esc to pause. Every menu works with the arrow keys and Enter.
 
-Unity's physics engine only sends OnTriggerEnter/Stay/Exit for a pair of colliders when at least one of them has a Rigidbody. Two plain colliders with no Rigidbody are treated as static, so nothing fires and nothing reports why. In my game the player has a Rigidbody, so coins, spikes, the bounce pad, the goal and the kill zone work without one of their own. The guard moves by script, so it has a kinematic Rigidbody.
+## Settings
 
-**2. Which ForceMode do your knockback and your Part A force use, and why each?**
+| Part | Setting | Value | Why |
+|---|---|---|---|
+| A | Harmony · base hue | triadic · 168° | Teal base; the partners are 288° (pink-violet) and 48° (yellow). |
+| A | Dark · mid · light | #0F2420 · #34B299 · #EBF4F2 | Gray 37 · 158 · 242, so the three values stay apart without colour. |
+| A | Accents | #FAD542 · #E09DF1 | Score and selected buttons use the yellow; the pickup burst and damage flash use the pink. |
+| A | Score text on its panel | 11.34 : 1 | #FAD542 on #0F2420. The lives and menu text (#EBF4F2) are 14.50 : 1. Both are on a solid panel, not the level. |
+| A | Button label on the button | 6.16 : 1 | A dark #0F2420 label on #34B299. White would be 2.63 : 1, so it is dark. |
+| B | Music · SFX groups, as mixed | 0 dB · 0 dB | At slider 1. The music is balanced by its AudioSource volume (0.45, about −6.9 dB) so effects sit above it. |
+| B | Slider at 1 · 0.5 · 0.0001 | 0 dB · −6.02 dB · −80 dB | `Log10(v) × 20`. The slider's minimum is 0.0001 because Log10(0) is minus infinity. |
+| C | Guard hum, in Level03–05 | Logarithmic · Min 2 m · Max 18 m | Min is about the guard's size. 18 m is longer than its 10 m give-up range, so you hear it coming before it chases you. |
+| C | Goal beacon, in every level | Linear · Min 3 m · Max 30 m | Linear reaches silence at Max, so the beacon is only audible when the goal is in reach of the level, and it grows steadily as you head for it. |
+| C | AudioListener | on the player (`ListenerOnPlayer`) | The follow camera sits 12 m up and 9 m back (about 15 m away), so on the camera every 3D sound would be far away. The camera's listener is removed. |
+| D | unlocked | int · default 1 | Highest open level. Only Level 1 is open on a fresh machine. |
+| D | best1 … best5 | float · HasKey first | A missing time is 0.0, which would beat every real time. |
+| D | MusicVolume (and SfxVolume) | float · default 1 | Slider value 0.0001–1, applied to the mixer at Start. |
 
-Knockback uses `ForceMode.Impulse` (8): it is one kick when a hit lands, scaled by the player's mass, and my controller pauses steering for 0.25 s so the next move line doesn't wipe it. The Part A bounce pad uses `ForceMode.VelocityChange` (9), a one-off kick that ignores mass, called once from OnTriggerEnter after zeroing the vertical speed. That makes the bounce the same height every time, about 4 m.
+## Answers
 
-**3. What does your code do when a second power-up is picked up while one is running?**
-
-My rule is Refresh. `PlayerController.BoostSpeed` stops the running coroutine and starts a new one, so the speed boost does not stack, and the timer restarts at the full 5 s. Two pickups 3 s apart end at 8 s. The player runs the timer because the pickup is destroyed as soon as it is collected, which would cut off a timer running on it.
-
-**4. Why can `==` fail as an arrival check, and when does it work?**
-
-Positions are floats that move in steps, so a guard rarely lands on exactly the target value: it can stop just short or overshoot, and it ends up shivering around the point and never "arrives". `==` only works right after `Vector3.MoveTowards`, which snaps exactly onto the target when it is within one step. My `EnemyPatrol` uses `Arrived()` instead: it checks that the distance is under `arriveDistance` (0.1 m), which is bigger than one step at its speeds (about 0.07 m at chase speed).
+1. **What `Time.timeScale = 0` stops in my game, and what it doesn't:** `Time.timeScale = 0` freezes everything on scaled time: physics and every `FixedUpdate` (player movement, the guards' patrol, the crusher's `WaitForSeconds` cycle), i-frames and the speed-boost timer. It does not stop `Update`, so `PauseMenu` still sees Esc, and `PlayerController.Update` has to check `PauseMenu.IsPaused`. It also doesn't stop the loading bar's `WaitForSecondsRealtime`, the health lag bar (unscaled time) or audio, hence `AudioListener.pause`.
+2. **What survives a LoadScene in my game, and how:** The `SfxPlayer` and `MusicPlayer` objects survive, through `DontDestroyOnLoad` plus the singleton check in `Awake`, so a second copy destroys itself. PlayerPrefs survive on disk. `Time.timeScale`, `AudioListener.pause` and `PauseMenu.IsPaused` survive as static state, so `Resume()` runs before every load. The HUD, the `LevelLoader`, `GameManager` and the player are destroyed and made again each time.
+3. **Why every PlayerPrefs read in my game has a default:** A key may not exist: on a fresh machine, or after Clear All PlayerPrefs. Without a default `GetInt("unlocked")` returns 0 and Level 1 would be locked, a missing `bestN` returns 0.0 so no real time could ever beat it, and a missing volume returns 0 and mutes the game. `SaveData` gives `unlocked` a default of 1 and volumes a default of 1, and checks `HasKey` before reading a best time.
+4. **An exception a forgotten unsubscribe would throw, and why mine can't:** A forgotten `-=` leaves the delegate pointing at a destroyed object, so the next `Damaged?.Invoke` throws a `MissingReferenceException` ("the object of type HealthBar has been destroyed but you are still trying to access it"). Mine can't: every listener (`HealthBar`, `HitSound`, `HitSparks`, `DamageFlash`) subscribes in `OnEnable` and unsubscribes in `OnDisable`, which also runs when the scene unloads, and the events are on `Health`, which is rebuilt with the scene.
