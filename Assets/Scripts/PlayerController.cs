@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (PauseMenu.IsPaused) return;     // Update still runs at a time scale of 0
         Keyboard k = Keyboard.current;
         if (k == null) return;
 

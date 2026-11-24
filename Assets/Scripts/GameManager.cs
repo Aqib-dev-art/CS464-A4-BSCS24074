@@ -1,7 +1,5 @@
 using System.Collections;
-using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,16 +12,17 @@ public class GameManager : MonoBehaviour
     [SerializeField] float respawnProtection = 2f;
 
     [Header("Reassign in every level")]
-    [SerializeField] TMP_Text scoreText;
-    [SerializeField] TMP_Text heartsText;
-    [SerializeField] TMP_Text livesText;
-    [SerializeField] GameObject winPanel;
-    [SerializeField] GameObject losePanel;
     [SerializeField] Transform player;
     [SerializeField] Transform respawnPoint;
 
+    [Header("Sounds")]
+    [SerializeField] AudioClip winClip;
+    [SerializeField] AudioClip loseClip;
+
+    public bool Ended { get; private set; }
+
+    GameHud hud;
     int score, lives;
-    bool ended;
     Health playerHealth;
     Rigidbody playerBody;
 
@@ -31,46 +30,52 @@ public class GameManager : MonoBehaviour
     {
         Instance = this;
         Time.timeScale = 1f;
+        AudioListener.pause = false;
+        hud = FindAnyObjectByType<GameHud>();
     }
+
+    void OnDestroy() { if (Instance == this) Instance = null; }
 
     void Start()
     {
         lives = startLives;
         playerHealth = player.GetComponent<Health>();
         playerBody = player.GetComponent<Rigidbody>();
-        if (winPanel) winPanel.SetActive(false);
-        if (losePanel) losePanel.SetActive(false);
-        UpdateScore();
-        UpdateLives();
-        UpdateHearts();
+        if (hud) { hud.SetScore(score, targetScore); hud.SetLives(lives); }
     }
 
     public void AddScore(int amount)
     {
-        if (ended) return;
+        if (Ended) return;
         score += amount;
-        UpdateScore();                 // text only changes when score changes
-        if (score >= targetScore) Win();
+        if (hud) hud.SetScore(score, targetScore);
+        if (score >= targetScore) Won();
     }
 
     // Call from a Goal trigger if the level uses "reach the goal with enough coins".
     public void ReachGoal()
     {
-        if (!ended && score >= targetScore) Win();
+        if (!Ended && score >= targetScore) Won();
     }
 
-    void Win()
+    // A win records the time, unlocks the next level and shows the win screen.
+    void Won()
     {
-        ended = true;
-        if (winPanel) winPanel.SetActive(true);
+        Ended = true;
+        int level = gameObject.scene.buildIndex;
+        float time = Time.timeSinceLevelLoad;
+        bool best = SaveData.Record(level, time);
+        SaveData.Unlock(level + 1);
+        if (SfxPlayer.Instance != null) SfxPlayer.Instance.Play(winClip);
+        if (hud) hud.ShowWin(time, best, level);
         Time.timeScale = 0f;
     }
 
     public void PlayerDied()
     {
-        if (ended) return;
+        if (Ended) return;
         lives--;
-        UpdateLives();
+        if (hud) hud.SetLives(lives);
         if (lives <= 0) { Lose(); return; }
         StartCoroutine(Respawn());
     }
@@ -84,31 +89,15 @@ public class GameManager : MonoBehaviour
         player.position = respawnPoint.position;
         Physics.SyncTransforms();
         playerHealth.ResetHealth(respawnProtection);
-        UpdateHearts();
     }
 
     void Lose()
     {
-        ended = true;
-        if (losePanel) losePanel.SetActive(true);
+        Ended = true;
+        if (SfxPlayer.Instance != null) SfxPlayer.Instance.Play(loseClip);
+        if (hud) hud.ShowLose();
         Time.timeScale = 0f;
     }
 
     public void SetCheckpoint(Transform point) => respawnPoint = point;
-
-    public void UpdateHearts()
-    {
-        if (heartsText && playerHealth)
-            heartsText.text = "Hearts: " + Mathf.Max(playerHealth.Current, 0);
-    }
-
-    void UpdateScore() { if (scoreText) scoreText.text = "Score: " + score + " / " + targetScore; }
-    void UpdateLives() { if (livesText) livesText.text = "Lives: " + Mathf.Max(lives, 0); }
-
-    // Hook to the Restart buttons on the win and lose panels.
-    public void Restart()
-    {
-        Time.timeScale = 1f;           // first, it survives a scene load
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
 }

@@ -127,3 +127,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PowerUp
   multiplier: 1.6
   duration: 5
+  pickupClip: {fileID: 8300000, guid: e6f88903682c4774ca1de87f62bc3a50, type: 3}
+  burstPrefab: {fileID: 206851125669026844, guid: 94acaf85f4f9aa6458246f1f7579d886, type: 3}

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Health : MonoBehaviour
@@ -5,7 +6,13 @@ public class Health : MonoBehaviour
     [SerializeField] int maxHealth = 3;
     [SerializeField] float iFrames = 1f;   // README: i-frames
 
+    // Events. Listeners subscribe in OnEnable and unsubscribe in OnDisable.
+    public event Action<int, int> Damaged;   // (current, max) after a hit
+    public event Action<int, int> Healed;    // (current, max) after a reset
+
     public int Current { get; private set; }
+    public int Max => maxHealth;
+
     float invulnerableUntil;
     bool dead;
 
@@ -16,7 +23,7 @@ public class Health : MonoBehaviour
         if (dead || Time.time < invulnerableUntil) return false;
         Current -= amount;
         invulnerableUntil = Time.time + iFrames;
-        GameManager.Instance.UpdateHearts();
+        Damaged?.Invoke(Current, maxHealth);
         if (Current <= 0) Die();           // <= 0, never == 0
         return true;
     }
@@ -26,7 +33,7 @@ public class Health : MonoBehaviour
     {
         if (dead) return;
         Current = 0;
-        GameManager.Instance.UpdateHearts();
+        Damaged?.Invoke(Current, maxHealth);
         Die();
     }
 
@@ -41,5 +48,6 @@ public class Health : MonoBehaviour
         Current = maxHealth;
         dead = false;
         invulnerableUntil = Time.time + protectionSeconds;
+        Healed?.Invoke(Current, maxHealth);
     }
 }
